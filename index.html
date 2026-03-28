@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kyber-Event Dashboard</title>
+    <title>Kyber Event 2026</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
@@ -13,11 +13,11 @@
 
     <div id="app">
         <div id="login-screen" class="card">
-            <h1 style="color: #231fff; text-shadow: 2px 2px #000;">KYBER EVENT</h1>
-            <input type="text" id="username" placeholder="Username (z.B. Anakin)">
+            <h1 class="glow-text">KYBER EVENT</h1>
+            <input type="text" id="username" placeholder="Dein Name">
             <input type="password" id="password" placeholder="Passwort">
             <button onclick="login()">Eintreten</button>
-            <p id="login-error" style="color: #ff4444; text-align: center; margin-top: 10px;"></p>
+            <p id="login-error" class="error-text"></p>
         </div>
 
         <div id="dashboard" class="hidden">
@@ -26,9 +26,9 @@
                 <button class="btn-logout" onclick="logout()">Logout</button>
             </header>
 
-            <div class="card status-card">
+            <div class="card mission-card">
                 <h3>Aktuelle Mission:</h3>
-                <h1 id="current-game-name">Warten auf Start...</h1>
+                <h1 id="current-game-name">Lädt...</h1>
             </div>
 
             <div class="stats-grid">
@@ -37,53 +37,48 @@
                     <p id="crystal-count">0</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Gesamtpunkte</h3>
+                    <h3>Punkte</h3>
                     <p id="total-points">0</p>
                 </div>
             </div>
 
             <div class="card">
-                <h2>Verfügbare Upgrades</h2>
-                <div id="shop-items" class="stats-grid">
-                    </div>
+                <h2>Shop</h2>
+                <div id="shop-items" class="stats-grid"></div>
             </div>
 
             <div class="card">
-                <h2>Rangliste (Top Jedi)</h2>
+                <h2>Rangliste</h2>
                 <ul id="leaderboard"></ul>
             </div>
 
             <div id="admin-panel" class="card admin-section hidden">
-                <h2 style="color: #ff4444;">Imperial Control (Admin)</h2>
+                <h2 style="color: #ff4444;">Admin Control</h2>
                 
                 <div class="admin-group">
-                    <label>Spiel-Modus wechseln:</label>
+                    <label>Spiel wechseln:</label>
                     <select id="game-select">
                         <option value="Lego Star Wars">Lego Star Wars</option>
                         <option value="Battlefront 2017">Battlefront 2017</option>
                         <option value="Jedi Survivor">Jedi Survivor</option>
                         <option value="Star Wars Quiz">Star Wars Quiz</option>
                     </select>
-                    <button onclick="updateGameFromDropdown()">Spiel für alle ändern</button>
+                    <button onclick="updateGameFromDropdown()">Spiel aktivieren</button>
                 </div>
 
-                <hr>
-
                 <div class="admin-group">
-                    <label>Neues Shop-Item (für gewähltes Spiel):</label>
-                    <input type="text" id="item-name" placeholder="Item Name">
+                    <label>Shop-Item erstellen:</label>
+                    <input type="text" id="item-name" placeholder="Name">
                     <input type="number" id="item-price" placeholder="Preis">
-                    <button onclick="addShopItem()" style="background: #FFE81F; color: black;">Item erstellen</button>
+                    <button onclick="addShopItem()">Item hinzufügen</button>
                 </div>
 
-                <hr>
-
                 <div class="admin-group">
-                    <label>Kristalle verwalten:</label>
+                    <label>Kristalle geben/abziehen:</label>
                     <input type="text" id="target-user" placeholder="Spieler Name">
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="addCrystal(1)" style="background: #28a745;">+1 💎</button>
-                        <button onclick="addCrystal(-1)" style="background: #ff4444;">-1 💎</button>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="addCrystal(1)" style="background: #28a745;">+1</button>
+                        <button onclick="addCrystal(-1)" style="background: #ff4444;">-1</button>
                     </div>
                 </div>
             </div>
