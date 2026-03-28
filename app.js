@@ -13,9 +13,24 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Sound (帝国 - Imperial Alert)
+// Sound Setup
 const alertSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 alertSound.load();
+
+// Audio-Aktivierung durch User-Klick (Browser Pflicht!)
+document.addEventListener('click', function initAudio() {
+    const btn = document.getElementById('enable-audio');
+    if (btn) {
+        btn.onclick = () => {
+            alertSound.play().then(() => {
+                alertSound.pause();
+                alertSound.currentTime = 0;
+                btn.innerText = "🔊 SOUNDS AKTIVIERT";
+                btn.style.borderColor = "lime";
+            });
+        };
+    }
+}, { once: false });
 
 // --- AUTH ---
 async function login() {
@@ -43,81 +58,73 @@ auth.onAuthStateChanged(user => {
 function startAdminNotifications() {
     const logDiv = document.getElementById('admin-purchase-log');
     
-    db.collection('logs').orderBy('timestamp', 'desc').limit(20).onSnapshot(snap => {
+    db.collection('logs').orderBy('timestamp', 'desc').limit(15).onSnapshot(snap => {
         logDiv.innerHTML = '';
         
-        snap.forEach((doc, index) => {
-            const data = doc.data();
-            const time = data.timestamp ? data.timestamp.toDate().toLocaleTimeString() : "...";
-            const name = data.userName || "Pilot";
-            const item = data.itemName || "Item"; // <--- ANZEIGE DES ITEMS
-            const price = data.price || 0;
-
-            logDiv.innerHTML += `
-                <div style="padding: 8px; border-bottom: 1px solid #333; color: #00d2ff; background: rgba(0,210,255,0.05); margin-bottom: 5px; border-left: 2px solid var(--imp-blue);">
-                    <span style="color: #666; font-size: 0.7em;">[${time}]</span><br>
-                    <strong>${name}</strong> kaufte:<br>
-                    <span style="color: #fff;">${item}</span> (${price} 💎)
-                </div>`;
-            
-            // Sound-Logik bei neuem Eintrag
-            if (index === 0 && snap.docChanges().some(c => c.type === "added")) {
-                const change = snap.docChanges().find(c => c.type === "added");
-                if (change && change.doc.data().timestamp) {
-                    const diff = new Date().getTime() - change.doc.data().timestamp.toDate().getTime();
-                    if (diff < 5000) {
-                        alertSound.play().catch(() => {});
+        snap.docChanges().forEach(change => {
+            if (change.type === "added") {
+                const newLog = change.doc.data();
+                
+                // Prüfen, ob der Log-Eintrag wirklich NEU ist (nicht beim ersten Laden der Liste)
+                if (newLog.timestamp) {
+                    const diff = new Date().getTime() - newLog.timestamp.toDate().getTime();
+                    if (diff < 8000) { // Eintrag jünger als 8 Sek
+                        
+                        // 1. SOUND ABSPIELEN
+                        alertSound.play().catch(e => console.log("Audio noch blockiert"));
+                        
+                        // 2. POPUP ANZEIGEN
+                        alert(`🚨 KAUF-ALARM!\nUser: ${newLog.userName}\nItem: ${newLog.itemName}\nPreis: ${newLog.price} 💎`);
                     }
                 }
             }
         });
+
+        // Liste rendern
+        snap.forEach(doc => {
+            const data = doc.data();
+            const time = data.timestamp ? data.timestamp.toDate().toLocaleTimeString() : "...";
+            logDiv.innerHTML += `
+                <div style="padding: 8px; border-bottom: 1px solid #333; color: #00d2ff; background: rgba(0,210,255,0.1); margin-bottom: 5px;">
+                    <span style="color: #888; font-size: 0.7em;">[${time}]</span><br>
+                    <strong>${data.userName}</strong>: ${data.itemName}<br>
+                    <span style="color: gold;">-${data.price} 💎</span>
+                </div>`;
+        });
     });
 }
 
-// --- KAUF FUNKTION ---
+// --- KAUF FUNKTION (FÜR USER) ---
 async function buyItem(itemId, price) {
     const userRef = db.collection('user').doc(auth.currentUser.uid);
     const userSnap = await userRef.get();
     const userData = userSnap.data();
-    
-    // NEU: Hol dir den Namen des Items aus der Shop-Sammlung
-    let itemName = "Unbekanntes Item";
-    try {
-        const itemSnap = await db.collection('shop').doc(itemId).get();
-        if (itemSnap.exists) {
-            itemName = itemSnap.data().name;
-        }
-    } catch (e) {
-        console.log("Item-Name konnte nicht geladen werden");
+
+    if (userData.crystals < price) {
+        alert("Zu wenig Kristalle!");
+        return;
     }
 
-    if (userData.crystals >= price) {
-        if(confirm(`Möchtest du "${itemName}" für ${price} 💎 kaufen?`)) {
-            try {
-                // 1. Kristalle beim User abziehen
-                await userRef.update({ 
-                    crystals: userData.crystals - price 
-                });
+    let itemName = "Unbekanntes Item";
+    const itemSnap = await db.collection('shop').doc(itemId).get();
+    if (itemSnap.exists) itemName = itemSnap.data().name;
 
-                // 2. Log für den Admin schreiben (jetzt mit itemName!)
-                await db.collection('logs').add({
-                    userName: userData.username,
-                    itemName: itemName, // <--- DAS HAT GEFEHLT
-                    price: price,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert("Kauf erfolgreich bestätigt!");
-            } catch (e) {
-                alert("Fehler bei der Transaktion: " + e.message);
-            }
-        }
-    } else {
-        alert("Zugriff verweigert: Zu wenig Kristalle!");
+    if(confirm(`"${itemName}" für ${price} 💎 kaufen?`)) {
+        try {
+            await userRef.update({ crystals: userData.crystals - price });
+            
+            await db.collection('logs').add({
+                userName: userData.username,
+                itemName: itemName,
+                price: price,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert("Kauf abgeschlossen!");
+        } catch (e) { alert("Fehler: " + e.message); }
     }
 }
 
-// --- ADMIN TOOLS ---
+// --- ADMIN LISTS ---
 function loadUserData(uid) {
     db.collection('user').doc(uid).onSnapshot(doc => {
         if (doc.exists) {
