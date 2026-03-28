@@ -13,20 +13,20 @@ body {
     color: #e0e0e0;
     font-family: 'Orbitron', sans-serif;
     margin: 0;
-    overflow-x: hidden;
+    display: flex; /* Wichtig für die Sidebar-Ausrichtung */
 }
 
 /* LAYOUT STRUKTUR */
 .main-layout {
     display: flex;
-    min-height: 100vh;
     width: 100vw;
+    min-height: 100vh;
 }
 
-/* SIDEBAR - LINKS FIXIERT */
+/* SIDEBAR - LINKS FIXIERT FÜR ADMINS */
 #admin-sidebar {
-    width: 280px;
-    min-width: 280px;
+    width: 300px;
+    min-width: 300px;
     background: var(--imp-gray);
     border-right: 3px solid var(--imp-red);
     padding: 20px;
@@ -40,7 +40,7 @@ body {
 
 .sidebar-header {
     color: var(--imp-red);
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
     text-align: center;
     padding-bottom: 15px;
@@ -48,11 +48,11 @@ body {
     margin-bottom: 20px;
 }
 
-/* USER LISTE IN SIDEBAR */
+/* USER ÜBERWACHUNGSLISTE */
 .user-monitor-row {
-    background: rgba(204, 0, 0, 0.05);
+    background: rgba(204, 0, 0, 0.1);
     border-left: 3px solid var(--imp-red);
-    padding: 12px;
+    padding: 10px;
     margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
@@ -60,34 +60,33 @@ body {
     font-size: 0.9em;
 }
 
-.u-cry { color: var(--imp-blue); font-weight: bold; }
-
-/* HAUPTINHALT */
+/* HAUPTBEREICH */
 .content {
     flex-grow: 1;
     padding: 40px;
-    max-width: 1000px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .card {
     background: var(--imp-gray);
     border: 1px solid var(--imp-border);
     padding: 25px;
-    border-radius: 2px; /* Eckiger, militärischer Look */
     margin-bottom: 25px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.7);
 }
 
 .admin-section { border: 2px solid var(--imp-red); }
 
-/* LOGO & TEXT */
+/* LOGO FIX */
 .imperial-logo {
     width: 120px;
     height: 120px;
     margin: 0 auto 20px;
+    /* Stabiler Link zum Logo */
     background: url('https://upload.wikimedia.org/wikipedia/commons/4/41/Galactic_Empire_emblem.svg') no-repeat center;
     background-size: contain;
-    filter: invert(1) drop-shadow(0 0 5px var(--imp-red));
+    filter: invert(1) drop-shadow(0 0 8px var(--imp-red));
 }
 
 .imperial-sub {
@@ -96,27 +95,17 @@ body {
     letter-spacing: 2px;
     border-left: 5px solid var(--imp-red);
     padding-left: 15px;
-    text-align: left;
+    margin-bottom: 20px;
 }
 
 /* BUTTONS & INPUTS */
-input, select {
-    background: #000;
-    border: 1px solid var(--imp-border);
-    color: #fff;
-    padding: 12px;
-    margin: 8px 0;
-    width: 100%;
-    font-family: 'Orbitron', sans-serif;
-}
-
 .imperial-btn {
-    background: #222;
+    background: #1a1a1a;
     color: #fff;
     border: 1px solid var(--imp-blue);
-    padding: 15px;
+    padding: 12px;
     cursor: pointer;
-    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
     transition: 0.3s;
 }
 
@@ -124,10 +113,24 @@ input, select {
 .imperial-btn.red { border-color: var(--imp-red); }
 .imperial-btn.red:hover { background: var(--imp-red); color: #fff; }
 
+input, select {
+    background: #000;
+    border: 1px solid var(--imp-border);
+    color: #fff;
+    padding: 10px;
+    font-family: 'Orbitron', sans-serif;
+}
+
 .hidden { display: none !important; }
 
-/* RESPONSIVE (Handy) */
-@media (max-width: 900px) {
+/* HANDY OPTIMIERUNG */
+@media (max-width: 1000px) {
     .main-layout { flex-direction: column; }
-    #admin-sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 3px solid var(--imp-red); }
+    #admin-sidebar { 
+        width: 100%; 
+        height: auto; 
+        position: relative; 
+        border-right: none; 
+        border-bottom: 3px solid var(--imp-red); 
+    }
 }
