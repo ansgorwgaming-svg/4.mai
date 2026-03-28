@@ -16,15 +16,29 @@ const db = firebase.firestore();
 
 // --- LOGIN FUNKTION ---
 async function login() {
-    const userVal = document.getElementById('username').value.trim().toLowerCase();
+    const userInput = document.getElementById('username').value.trim();
     const passInput = document.getElementById('password').value;
-    const email = `${userVal}@event.local`;
+    
+    // Wir machen alles klein für die E-Mail
+    const email = `${userInput.toLowerCase()}@event.local`;
+
+    console.log("Versuche Login mit E-Mail:", email);
 
     try {
-        await auth.signInWithEmailAndPassword(email, passInput);
+        const userCredential = await auth.signInWithEmailAndPassword(email, passInput);
+        console.log("Erfolg! UID:", userCredential.user.uid);
     } catch (error) {
-        console.error(error);
-        document.getElementById('login-error').innerText = "Login fehlgeschlagen. Name oder PW falsch.";
+        console.error("Firebase Fehler:", error.code);
+        
+        // Den Fehler zeigen wir jetzt direkt im roten Textfeld an:
+        let errorMsg = "Fehler: ";
+        if (error.code === 'auth/user-not-found') errorMsg += "User nicht gefunden (E-Mail falsch?)";
+        else if (error.code === 'auth/wrong-password') errorMsg += "Passwort ist falsch.";
+        else if (error.code === 'auth/invalid-email') errorMsg += "E-Mail Format ungültig.";
+        else if (error.code === 'auth/operation-not-allowed') errorMsg += "Login-Methode in Firebase deaktiviert.";
+        else errorMsg += error.code; // Zeigt den technischen Code (z.B. network-request-failed)
+
+        document.getElementById('login-error').innerText = errorMsg;
     }
 }
 
