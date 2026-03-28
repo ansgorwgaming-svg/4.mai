@@ -13,20 +13,18 @@ body {
     color: #e0e0e0;
     font-family: 'Orbitron', sans-serif;
     margin: 0;
-    display: flex; /* Wichtig für die Sidebar-Ausrichtung */
 }
 
-/* LAYOUT STRUKTUR */
 .main-layout {
     display: flex;
-    width: 100vw;
     min-height: 100vh;
+    width: 100vw;
 }
 
-/* SIDEBAR - LINKS FIXIERT FÜR ADMINS */
+/* SIDEBAR */
 #admin-sidebar {
-    width: 300px;
-    min-width: 300px;
+    width: 280px;
+    min-width: 280px;
     background: var(--imp-gray);
     border-right: 3px solid var(--imp-red);
     padding: 20px;
@@ -35,20 +33,17 @@ body {
     top: 0;
     overflow-y: auto;
     box-sizing: border-box;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
 }
 
 .sidebar-header {
     color: var(--imp-red);
-    font-size: 1.1em;
-    font-weight: bold;
     text-align: center;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--imp-red);
     margin-bottom: 20px;
+    font-weight: bold;
 }
 
-/* USER ÜBERWACHUNGSLISTE */
 .user-monitor-row {
     background: rgba(204, 0, 0, 0.1);
     border-left: 3px solid var(--imp-red);
@@ -56,16 +51,16 @@ body {
     margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
-    font-family: 'Courier New', monospace;
     font-size: 0.9em;
 }
 
-/* HAUPTBEREICH */
+.u-cry { color: var(--imp-blue); }
+
+/* HAUPTTEIL */
 .content {
     flex-grow: 1;
     padding: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1000px;
 }
 
 .card {
@@ -73,64 +68,41 @@ body {
     border: 1px solid var(--imp-border);
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.7);
 }
 
 .admin-section { border: 2px solid var(--imp-red); }
 
-/* LOGO FIX */
 .imperial-logo {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 20px;
-    /* Stabiler Link zum Logo */
+    width: 100px; height: 100px; margin: 0 auto 20px;
     background: url('https://upload.wikimedia.org/wikipedia/commons/4/41/Galactic_Empire_emblem.svg') no-repeat center;
-    background-size: contain;
-    filter: invert(1) drop-shadow(0 0 8px var(--imp-red));
+    background-size: contain; filter: invert(1) drop-shadow(0 0 5px var(--imp-red));
 }
 
 .imperial-sub {
-    color: var(--imp-red);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    border-left: 5px solid var(--imp-red);
-    padding-left: 15px;
-    margin-bottom: 20px;
+    color: var(--imp-red); text-transform: uppercase; letter-spacing: 2px;
+    border-left: 5px solid var(--imp-red); padding-left: 15px; margin-bottom: 20px;
 }
 
-/* BUTTONS & INPUTS */
+.big-value { font-size: 3em; color: var(--imp-blue); margin: 10px 0; }
+.label { font-size: 0.8em; color: #888; }
+
+input, select {
+    background: #000; border: 1px solid var(--imp-border); color: #fff;
+    padding: 12px; margin: 8px 0; width: 100%; font-family: 'Orbitron', sans-serif;
+}
+
 .imperial-btn {
-    background: #1a1a1a;
-    color: #fff;
-    border: 1px solid var(--imp-blue);
-    padding: 12px;
-    cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
-    transition: 0.3s;
+    background: #1a1a1a; color: #fff; border: 1px solid var(--imp-blue);
+    padding: 12px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s;
 }
 
 .imperial-btn:hover { background: var(--imp-blue); color: #000; }
 .imperial-btn.red { border-color: var(--imp-red); }
 .imperial-btn.red:hover { background: var(--imp-red); color: #fff; }
 
-input, select {
-    background: #000;
-    border: 1px solid var(--imp-border);
-    color: #fff;
-    padding: 10px;
-    font-family: 'Orbitron', sans-serif;
-}
-
 .hidden { display: none !important; }
 
-/* HANDY OPTIMIERUNG */
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
     .main-layout { flex-direction: column; }
-    #admin-sidebar { 
-        width: 100%; 
-        height: auto; 
-        position: relative; 
-        border-right: none; 
-        border-bottom: 3px solid var(--imp-red); 
-    }
+    #admin-sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 3px solid var(--imp-red); }
 }

@@ -18,36 +18,35 @@
             <input type="text" id="username" placeholder="NAME">
             <input type="password" id="password" placeholder="PASSWORD">
             <button class="imperial-btn" onclick="login()" style="width:100%">LOGIN</button>
-            <p id="login-error" class="error-text" style="color:red"></p>
+            <p id="login-error" class="error-text" style="color:red; margin-top:10px;"></p>
         </div>
 
         <div id="dashboard" class="hidden main-layout">
             
             <aside id="admin-sidebar" class="hidden">
                 <div class="sidebar-header">USER MONITOR</div>
-                <div id="user-crystal-list">
-                    </div>
+                <div id="user-crystal-list"></div>
             </aside>
 
             <main class="content">
                 <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
                     <h2 id="user-display" style="color:var(--imp-blue); margin:0;">PILOT</h2>
-                    <button onclick="logout()" style="background:none; border:1px solid #555; color:#555; cursor:pointer; padding:5px 10px;">LOGOUT</button>
+                    <button onclick="logout()" class="imperial-btn" style="padding:5px 15px; border-color:#444;">LOGOUT</button>
                 </header>
 
                 <div class="card mission-card">
-                    <span style="font-size:0.8em; color:#888;">ACTIVE MISSION</span>
-                    <h1 id="current-game-name" style="margin:10px 0; letter-spacing:3px;">SYSTEM OFFLINE</h1>
+                    <span class="label">ACTIVE MISSION</span>
+                    <h1 id="current-game-name" style="margin:10px 0; letter-spacing:3px; color:white;">SYSTEM OFFLINE</h1>
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:25px;">
                     <div class="card" style="margin:0; text-align:center;">
-                        <span style="font-size:0.8em; color:#888;">CRYSTALS</span>
-                        <h2 id="crystal-count" style="font-size:3em; margin:10px 0; color:var(--imp-blue)">0</h2>
+                        <span class="label">CRYSTALS</span>
+                        <h2 id="crystal-count" class="big-value">0</h2>
                     </div>
                     <div class="card" style="margin:0; text-align:center;">
-                        <span style="font-size:0.8em; color:#888;">POINTS</span>
-                        <h2 id="total-points" style="font-size:3em; margin:10px 0; color:var(--imp-blue)">0</h2>
+                        <span class="label">POINTS</span>
+                        <h2 id="total-points" class="big-value">0</h2>
                     </div>
                 </div>
 
@@ -68,9 +67,18 @@
                         <div>
                             <label>QUICK CRYSTAL TRANSFER</label>
                             <input type="text" id="target-user" placeholder="USER NAME">
-                            <input type="number" id="crystal-amount" placeholder="AMOUNT (e.g. 50)">
+                            <input type="number" id="crystal-amount" placeholder="AMOUNT (e.g. 10)">
                             <button class="imperial-btn" onclick="addCrystalCustom()" style="width:100%">EXECUTE</button>
                         </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--imp-border); margin-top: 25px; padding-top: 20px;">
+                        <label>ADD NEW SHOP ITEM (FOR CURRENT GAME)</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="item-name" placeholder="ITEM NAME">
+                            <input type="number" id="item-price" placeholder="PRICE">
+                        </div>
+                        <button class="imperial-btn red" onclick="addShopItem()" style="width:100%">REGISTER ITEM</button>
                     </div>
                 </div>
 
