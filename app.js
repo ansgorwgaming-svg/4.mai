@@ -66,6 +66,7 @@ function loadUserData(uid) {
                 document.getElementById('admin-panel').classList.remove('hidden');
                 document.getElementById('admin-sidebar').classList.remove('hidden');
                 loadAdminUserList();
+                startAdminNotifications();
             }
         }
     });
@@ -80,6 +81,25 @@ function loadAdminUserList() {
             const u = doc.data();
             if(u.role !== 'admin') {
                 list.innerHTML += `<div class="user-monitor-row"><span>${u.username}</span><span class="u-cry">${u.crystals || 0} 💎</span></div>`;
+            }
+        });
+    });
+}
+
+// NEU: Überwachung von Käufen für den Admin
+function listenForPurchases() {
+    // Wir schauen in die User-Sammlung. Wenn sich Kristalle VERRINGERN, 
+    // war es wahrscheinlich ein Kauf.
+    db.collection('user').onSnapshot(snap => {
+        snap.docChanges().forEach(change => {
+            if (change.type === "modified") {
+                const newData = change.doc.data();
+                const oldData = change.doc.data(); // In Firestore ist das etwas komplexer, 
+                // einfacherer Weg: Wir prüfen, ob die Rolle nicht Admin ist
+                if(newData.role !== 'admin') {
+                     console.log(`Update bei ${newData.username}`);
+                     // Hier könnte man noch eine Log-Sammlung für Käufe anlegen für 100% Genauigkeit
+                }
             }
         });
     });
@@ -127,12 +147,24 @@ function loadShop(gameName) {
 async function buyItem(id, price) {
     const userRef = db.collection('user').doc(auth.currentUser.uid);
     const snap = await userRef.get();
-    if (snap.data().crystals >= price) {
-        if(confirm("Bestätigen?")) {
-            await userRef.update({ crystals: snap.data().crystals - price });
-            alert("Erfolg!");
+    const userData = snap.data();
+    
+    if (userData.crystals >= price) {
+        if(confirm(`Item für ${price} Kristalle kaufen?`)) {
+            // Kristalle abziehen
+            await userRef.update({ crystals: userData.crystals - price });
+            
+            // NEU: Kauf-Log für den Admin erstellen
+            await db.collection('logs').add({
+                msg: `${userData.username} hat ein Item für ${price} 💎 gekauft!`,
+                time: new Date()
+            });
+            
+            alert("Kauf erfolgreich!");
         }
-    } else { alert("Nicht genug Kristalle!"); }
+    } else {
+        alert("Zu wenig Kristalle!");
+    }
 }
 
 function loadLeaderboard() {
@@ -150,6 +182,21 @@ function loadLeaderboard() {
 async function updateGameFromDropdown() {
     const val = document.getElementById('game-select').value;
     await db.collection('settings').doc('gameState').set({ name: val });
+}
+function startAdminNotifications() {
+    // Wir hören auf neue Einträge in 'logs'
+    db.collection('logs').orderBy('time', 'desc').limit(1).onSnapshot(snap => {
+        snap.docChanges().forEach(change => {
+            if (change.type === "added") {
+                const log = change.doc.data();
+                // Verhindern, dass alte Logs beim Start aufploppen (nur neue Logs der letzten 10 Sek)
+                const now = new Date().getTime();
+                if (now - log.time.toDate().getTime() < 10000) {
+                    alert("🚨 IMPERIAL ALERT: " + log.msg);
+                }
+            }
+        });
+    });
 }
 
 function logout() { auth.signOut(); }
