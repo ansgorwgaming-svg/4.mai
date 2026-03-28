@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kyber-Event Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div id="app">
+        <div id="login-screen" class="card">
+            <h1 style="color: #FFE81F; text-shadow: 2px 2px #000;">KYBER EVENT</h1>
+            <input type="text" id="username" placeholder="Username (z.B. Anakin)">
+            <input type="password" id="password" placeholder="Passwort">
+            <button onclick="login()">Eintreten</button>
+            <p id="login-error" style="color: #ff4444; text-align: center; margin-top: 10px;"></p>
+        </div>
+
+        <div id="dashboard" class="hidden">
+            <header>
+                <h2 id="user-display">Hallo!</h2>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </header>
+
+            <div class="card status-card">
+                <h3>Aktuelle Mission:</h3>
+                <h1 id="current-game-name">Warten auf Start...</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Kristalle</h3>
+                    <p id="crystal-count">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Gesamtpunkte</h3>
+                    <p id="total-points">0</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Verfügbare Upgrades</h2>
+                <div id="shop-items" class="stats-grid">
+                    </div>
+            </div>
+
+            <div class="card">
+                <h2>Rangliste (Top Jedi)</h2>
+                <ul id="leaderboard"></ul>
+            </div>
+
+            <div id="admin-panel" class="card admin-section hidden">
+                <h2 style="color: #ff4444;">Imperial Control (Admin)</h2>
+                
+                <div class="admin-group">
+                    <label>Spiel-Modus wechseln:</label>
+                    <select id="game-select">
+                        <option value="Lego Star Wars">Lego Star Wars</option>
+                        <option value="Battlefront 2017">Battlefront 2017</option>
+                        <option value="Jedi Survivor">Jedi Survivor</option>
+                        <option value="Star Wars Quiz">Star Wars Quiz</option>
+                    </select>
+                    <button onclick="updateGameFromDropdown()">Spiel für alle ändern</button>
+                </div>
+
+                <hr>
+
+                <div class="admin-group">
+                    <label>Neues Shop-Item (für gewähltes Spiel):</label>
+                    <input type="text" id="item-name" placeholder="Item Name">
+                    <input type="number" id="item-price" placeholder="Preis">
+                    <button onclick="addShopItem()" style="background: #FFE81F; color: black;">Item erstellen</button>
+                </div>
+
+                <hr>
+
+                <div class="admin-group">
+                    <label>Kristalle verwalten:</label>
+                    <input type="text" id="target-user" placeholder="Spieler Name">
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="addCrystal(1)" style="background: #28a745;">+1 💎</button>
+                        <button onclick="addCrystal(-1)" style="background: #ff4444;">-1 💎</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
