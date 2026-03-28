@@ -3,86 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kyber Event Krass</title>
+    <title>Imperial Command Center</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
-<body>
+<body class="imperial-theme">
 
     <div id="app">
-        <div id="login-screen" class="card">
-            <h1 class="glow-text">KYBER EVENT</h1>
-            <input type="text" id="username" placeholder="Dein Name">
-            <input type="password" id="password" placeholder="Passwort">
-            <button onclick="login()">Eintreten</button>
+        <div id="login-screen" class="card central-box">
+            <div class="imperial-logo"></div>
+            <h1 class="imperial-text">IDENTITY VERIFICATION</h1>
+            <input type="text" id="username" placeholder="ACCESS CODE (NAME)">
+            <input type="password" id="password" placeholder="SECURITY KEY">
+            <button class="imperial-btn" onclick="login()">INITIALIZE</button>
             <p id="login-error" class="error-text"></p>
         </div>
 
-        <div id="dashboard" class="hidden">
-            <header>
-                <h2 id="user-display">Hallo!</h2>
-                <button class="btn-logout" onclick="logout()">Logout</button>
-            </header>
+        <div id="dashboard" class="hidden main-layout">
+            
+            <aside id="admin-sidebar" class="hidden">
+                <div class="sidebar-header">USER MONITORING</div>
+                <div id="user-crystal-list">
+                    </div>
+            </aside>
 
-            <div class="card mission-card">
-                <h3>Aktuelle Mission:</h3>
-                <h1 id="current-game-name">Lädt...</h1>
-            </div>
+            <main class="content">
+                <header class="top-bar">
+                    <div class="user-info">
+                        <span class="status-dot"></span>
+                        <span id="user-display">COMMANDER</span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">TERMINATE SESSION</button>
+                </header>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>Kristalle</h3>
-                    <p id="crystal-count">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Punkte</h3>
-                    <p id="total-points">0</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Shop</h2>
-                <div id="shop-items" class="stats-grid"></div>
-            </div>
-
-            <div class="card">
-                <h2>Rangliste</h2>
-                <ul id="leaderboard"></ul>
-            </div>
-
-            <div id="admin-panel" class="card admin-section hidden">
-                <h2 style="color: #ff4444;">Admin Control</h2>
-                
-                <div class="admin-group">
-                    <label>Spiel wechseln:</label>
-                    <select id="game-select">
-                        <option value="Lego Star Wars">Lego Star Wars</option>
-                        <option value="Battlefront 2017">Battlefront 2017</option>
-                        <option value="Jedi Survivor">Jedi Survivor</option>
-                        <option value="Star Wars Quiz">Star Wars Quiz</option>
-                    </select>
-                    <button onclick="updateGameFromDropdown()">Spiel aktivieren</button>
+                <div class="card mission-card">
+                    <h3 class="label">CURRENT MISSION</h3>
+                    <h1 id="current-game-name" class="game-title">SCANNING...</h1>
                 </div>
 
-                <div class="admin-group">
-                    <label>Shop-Item erstellen:</label>
-                    <input type="text" id="item-name" placeholder="Name">
-                    <input type="number" id="item-price" placeholder="Preis">
-                    <button onclick="addShopItem()">Item hinzufügen</button>
-                </div>
-
-                <div class="admin-group">
-                    <label>Kristalle geben/abziehen:</label>
-                    <input type="text" id="target-user" placeholder="Spieler Name">
-                    <div style="display: flex; gap: 5px;">
-                        <button onclick="addCrystal(1)" style="background: #28a745;">+1</button>
-                        <button onclick="addCrystal(-1)" style="background: #ff4444;">-1</button>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="label">CRYSTALS</span>
+                        <p id="crystal-count" class="big-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="label">RANKING POINTS</span>
+                        <p id="total-points" class="big-value">0</p>
                     </div>
                 </div>
-            </div>
+
+                <div id="shop-container" class="card">
+                    <h2 class="imperial-sub">ARMORY / SHOP</h2>
+                    <div id="shop-items" class="stats-grid"></div>
+                </div>
+
+                <div id="admin-panel" class="card admin-section hidden">
+                    <h2 class="imperial-sub" style="color: #ff4444;">IMPERIAL CONTROL</h2>
+                    
+                    <div class="admin-grid">
+                        <div class="admin-group">
+                            <label>DEPLOY MISSION:</label>
+                            <select id="game-select">
+                                <option value="Lego Star Wars">Lego Star Wars</option>
+                                <option value="Battlefront 2017">Battlefront 2017</option>
+                                <option value="Jedi Survivor">Jedi Survivor</option>
+                                <option value="Star Wars Quiz">Star Wars Quiz</option>
+                            </select>
+                            <button class="imperial-btn red" onclick="updateGameFromDropdown()">ACTIVATE</button>
+                        </div>
+
+                        <div class="admin-group">
+                            <label>TRANSFER CRYSTALS:</label>
+                            <input type="text" id="target-user" placeholder="PILOT NAME">
+                            <input type="number" id="crystal-amount" placeholder="AMOUNT (e.g. 10 or -5)">
+                            <button class="imperial-btn" onclick="addCrystalCustom()">EXECUTE TRANSFER</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-group">
+                        <label>ADD ARMORY ITEM:</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="item-name" placeholder="ITEM NAME">
+                            <input type="number" id="item-price" placeholder="PRICE">
+                        </div>
+                        <button class="imperial-btn" onclick="addShopItem()">REGISTER ITEM</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="imperial-sub">RANKING</h2>
+                    <ul id="leaderboard"></ul>
+                </div>
+            </main>
         </div>
     </div>
 

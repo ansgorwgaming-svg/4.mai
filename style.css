@@ -1,79 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
 :root {
-    --bg: #0b0e14;
-    --card: #1c222d;
-    --accent: #00d2ff;
-    --text: #ffffff;
+    --imp-black: #050505;
+    --imp-gray: #1a1a1a;
+    --imp-light-gray: #333;
+    --imp-red: #8b0000;
+    --imp-blue: #006699;
+    --text: #e0e0e0;
 }
 
-body {
-    background-color: var(--bg);
+body.imperial-theme {
+    background: var(--imp-black);
     color: var(--text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     margin: 0;
-    display: flex;
-    justify-content: center;
+    overflow-x: hidden;
 }
 
-#app { width: 100%; max-width: 500px; padding: 20px; }
+/* SIDEBAR LAYOUT */
+.main-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+#admin-sidebar {
+    width: 250px;
+    background: var(--imp-gray);
+    border-right: 2px solid var(--imp-red);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    color: var(--imp-red);
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--imp-red);
+    padding-bottom: 10px;
+}
+
+.user-monitor-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #222;
+    font-size: 0.85em;
+}
+
+.u-cry { color: var(--imp-blue); font-weight: bold; }
+
+/* CONTENT AREA */
+.content {
+    flex: 1;
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
 
 .card {
-    background: var(--card);
+    background: var(--imp-gray);
+    border: 1px solid var(--imp-light-gray);
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 4px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
+
+.admin-section { border: 2px solid var(--imp-red); }
+
+/* IMPERIAL ELEMENTS */
+.imperial-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: url('https://i.ebayimg.com/images/g/wHUAAOSw8gVX54c0/s-l1200.jpg') no-repeat center;
+    background-size: contain;
+    filter: invert(1);
+}
+
+.imperial-text { color: var(--imp-blue); text-align: center; letter-spacing: 3px; }
+.label { font-size: 0.7em; color: #888; display: block; }
+.big-value { font-size: 2.5em; margin: 5px 0; color: var(--imp-blue); text-shadow: 0 0 5px var(--imp-blue); }
+
+input, select {
+    background: #000;
+    border: 1px solid var(--imp-light-gray);
+    color: white;
+    padding: 12px;
+    width: 100%;
+    margin: 5px 0;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.imperial-btn {
+    background: var(--imp-blue);
+    color: white;
+    border: none;
+    padding: 15px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.imperial-btn.red { background: var(--imp-red); }
 
 .hidden { display: none !important; }
 
-h1, h2, h3 { text-align: center; margin-top: 0; }
-.glow-text { color: #FFE81F; text-shadow: 0 0 10px #FFE81F; margin-bottom: 20px; }
-
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    background: #000;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 6px;
-    box-sizing: border-box;
+/* Responsive für Handy-User */
+@media (max-width: 768px) {
+    .main-layout { flex-direction: column; }
+    #admin-sidebar { width: 100%; border-right: none; border-bottom: 2px solid var(--imp-red); }
 }
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: var(--accent);
-    border: none;
-    color: black;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-button:active { transform: scale(0.98); }
-
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
-.stat-card {
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.admin-section { border: 2px solid #ff4444; margin-top: 40px; }
-.admin-group { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333; }
-.error-text { color: #ff4444; text-align: center; font-weight: bold; }
-
-ul#leaderboard { list-style: none; padding: 0; }
-ul#leaderboard li {
-    padding: 10px;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-}
-
-.btn-logout { background: #555; color: white; width: auto; padding: 5px 15px; font-size: 0.8em; }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
