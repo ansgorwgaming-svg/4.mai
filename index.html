@@ -3,98 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imperial Command Center</title>
+    <title>Imperial Command Console</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="imperial-theme">
+<body>
 
     <div id="app">
-        <div id="login-screen" class="card central-box">
+        <div id="login-screen" class="card" style="max-width: 400px; margin: 100px auto; text-align: center;">
             <div class="imperial-logo"></div>
-            <h1 class="imperial-text">IDENTITY VERIFICATION</h1>
-            <input type="text" id="username" placeholder="ACCESS CODE (NAME)">
-            <input type="password" id="password" placeholder="SECURITY KEY">
-            <button class="imperial-btn" onclick="login()">INITIALIZE</button>
-            <p id="login-error" class="error-text"></p>
+            <h1 style="color:var(--imp-blue)">IDENTITY CHECK</h1>
+            <input type="text" id="username" placeholder="NAME">
+            <input type="password" id="password" placeholder="PASSWORD">
+            <button class="imperial-btn" onclick="login()" style="width:100%">LOGIN</button>
+            <p id="login-error" class="error-text" style="color:red"></p>
         </div>
 
         <div id="dashboard" class="hidden main-layout">
             
             <aside id="admin-sidebar" class="hidden">
-                <div class="sidebar-header">USER MONITORING</div>
+                <div class="sidebar-header">USER MONITOR</div>
                 <div id="user-crystal-list">
                     </div>
             </aside>
 
             <main class="content">
-                <header class="top-bar">
-                    <div class="user-info">
-                        <span class="status-dot"></span>
-                        <span id="user-display">COMMANDER</span>
-                    </div>
-                    <button class="btn-logout" onclick="logout()">TERMINATE SESSION</button>
+                <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                    <h2 id="user-display" style="color:var(--imp-blue); margin:0;">PILOT</h2>
+                    <button onclick="logout()" style="background:none; border:1px solid #555; color:#555; cursor:pointer; padding:5px 10px;">LOGOUT</button>
                 </header>
 
                 <div class="card mission-card">
-                    <h3 class="label">CURRENT MISSION</h3>
-                    <h1 id="current-game-name" class="game-title">SCANNING...</h1>
+                    <span style="font-size:0.8em; color:#888;">ACTIVE MISSION</span>
+                    <h1 id="current-game-name" style="margin:10px 0; letter-spacing:3px;">SYSTEM OFFLINE</h1>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="label">CRYSTALS</span>
-                        <p id="crystal-count" class="big-value">0</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:25px;">
+                    <div class="card" style="margin:0; text-align:center;">
+                        <span style="font-size:0.8em; color:#888;">CRYSTALS</span>
+                        <h2 id="crystal-count" style="font-size:3em; margin:10px 0; color:var(--imp-blue)">0</h2>
                     </div>
-                    <div class="stat-card">
-                        <span class="label">RANKING POINTS</span>
-                        <p id="total-points" class="big-value">0</p>
+                    <div class="card" style="margin:0; text-align:center;">
+                        <span style="font-size:0.8em; color:#888;">POINTS</span>
+                        <h2 id="total-points" style="font-size:3em; margin:10px 0; color:var(--imp-blue)">0</h2>
                     </div>
-                </div>
-
-                <div id="shop-container" class="card">
-                    <h2 class="imperial-sub">ARMORY / SHOP</h2>
-                    <div id="shop-items" class="stats-grid"></div>
                 </div>
 
                 <div id="admin-panel" class="card admin-section hidden">
-                    <h2 class="imperial-sub" style="color: #ff4444;">IMPERIAL CONTROL</h2>
+                    <h2 class="imperial-sub">ADMIN CONTROL PANEL</h2>
                     
-                    <div class="admin-grid">
-                        <div class="admin-group">
-                            <label>DEPLOY MISSION:</label>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div>
+                            <label>SET ACTIVE GAME</label>
                             <select id="game-select">
                                 <option value="Lego Star Wars">Lego Star Wars</option>
                                 <option value="Battlefront 2017">Battlefront 2017</option>
                                 <option value="Jedi Survivor">Jedi Survivor</option>
                                 <option value="Star Wars Quiz">Star Wars Quiz</option>
                             </select>
-                            <button class="imperial-btn red" onclick="updateGameFromDropdown()">ACTIVATE</button>
+                            <button class="imperial-btn red" onclick="updateGameFromDropdown()" style="width:100%">UPDATE GAME</button>
                         </div>
-
-                        <div class="admin-group">
-                            <label>TRANSFER CRYSTALS:</label>
-                            <input type="text" id="target-user" placeholder="PILOT NAME">
-                            <input type="number" id="crystal-amount" placeholder="AMOUNT (e.g. 10 or -5)">
-                            <button class="imperial-btn" onclick="addCrystalCustom()">EXECUTE TRANSFER</button>
+                        <div>
+                            <label>QUICK CRYSTAL TRANSFER</label>
+                            <input type="text" id="target-user" placeholder="USER NAME">
+                            <input type="number" id="crystal-amount" placeholder="AMOUNT (e.g. 50)">
+                            <button class="imperial-btn" onclick="addCrystalCustom()" style="width:100%">EXECUTE</button>
                         </div>
-                    </div>
-
-                    <div class="admin-group">
-                        <label>ADD ARMORY ITEM:</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="item-name" placeholder="ITEM NAME">
-                            <input type="number" id="item-price" placeholder="PRICE">
-                        </div>
-                        <button class="imperial-btn" onclick="addShopItem()">REGISTER ITEM</button>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h2 class="imperial-sub">RANKING</h2>
-                    <ul id="leaderboard"></ul>
+                    <h2 class="imperial-sub">ARMORY / SHOP</h2>
+                    <div id="shop-items" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
+                </div>
+
+                <div class="card">
+                    <h2 class="imperial-sub">GLOBAL RANKING</h2>
+                    <ul id="leaderboard" style="list-style:none; padding:0;"></ul>
                 </div>
             </main>
         </div>

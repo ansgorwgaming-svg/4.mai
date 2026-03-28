@@ -2,115 +2,132 @@
 
 :root {
     --imp-black: #050505;
-    --imp-gray: #1a1a1a;
-    --imp-light-gray: #333;
-    --imp-red: #8b0000;
-    --imp-blue: #006699;
-    --text: #e0e0e0;
+    --imp-gray: #121212;
+    --imp-red: #cc0000;
+    --imp-blue: #0088ff;
+    --imp-border: #333;
 }
 
-body.imperial-theme {
+body {
     background: var(--imp-black);
-    color: var(--text);
+    color: #e0e0e0;
     font-family: 'Orbitron', sans-serif;
     margin: 0;
     overflow-x: hidden;
 }
 
-/* SIDEBAR LAYOUT */
+/* LAYOUT STRUKTUR */
 .main-layout {
     display: flex;
     min-height: 100vh;
+    width: 100vw;
 }
 
+/* SIDEBAR - LINKS FIXIERT */
 #admin-sidebar {
-    width: 250px;
+    width: 280px;
+    min-width: 280px;
     background: var(--imp-gray);
-    border-right: 2px solid var(--imp-red);
+    border-right: 3px solid var(--imp-red);
     padding: 20px;
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    box-sizing: border-box;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
 }
 
 .sidebar-header {
     color: var(--imp-red);
+    font-size: 1.2em;
     font-weight: bold;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--imp-red);
     margin-bottom: 20px;
-    border-bottom: 1px solid var(--imp-red);
-    padding-bottom: 10px;
 }
 
+/* USER LISTE IN SIDEBAR */
 .user-monitor-row {
+    background: rgba(204, 0, 0, 0.05);
+    border-left: 3px solid var(--imp-red);
+    padding: 12px;
+    margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #222;
-    font-size: 0.85em;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
 }
 
 .u-cry { color: var(--imp-blue); font-weight: bold; }
 
-/* CONTENT AREA */
+/* HAUPTINHALT */
 .content {
-    flex: 1;
-    padding: 20px;
-    max-width: 900px;
-    margin: 0 auto;
+    flex-grow: 1;
+    padding: 40px;
+    max-width: 1000px;
 }
 
 .card {
     background: var(--imp-gray);
-    border: 1px solid var(--imp-light-gray);
-    padding: 20px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    position: relative;
-    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    border: 1px solid var(--imp-border);
+    padding: 25px;
+    border-radius: 2px; /* Eckiger, militärischer Look */
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.7);
 }
 
 .admin-section { border: 2px solid var(--imp-red); }
 
-/* IMPERIAL ELEMENTS */
+/* LOGO & TEXT */
 .imperial-logo {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     margin: 0 auto 20px;
-    background: url('https://i.ebayimg.com/images/g/wHUAAOSw8gVX54c0/s-l1200.jpg') no-repeat center;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/4/41/Galactic_Empire_emblem.svg') no-repeat center;
     background-size: contain;
-    filter: invert(1);
+    filter: invert(1) drop-shadow(0 0 5px var(--imp-red));
 }
 
-.imperial-text { color: var(--imp-blue); text-align: center; letter-spacing: 3px; }
-.label { font-size: 0.7em; color: #888; display: block; }
-.big-value { font-size: 2.5em; margin: 5px 0; color: var(--imp-blue); text-shadow: 0 0 5px var(--imp-blue); }
+.imperial-sub {
+    color: var(--imp-red);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-left: 5px solid var(--imp-red);
+    padding-left: 15px;
+    text-align: left;
+}
 
+/* BUTTONS & INPUTS */
 input, select {
     background: #000;
-    border: 1px solid var(--imp-light-gray);
-    color: white;
+    border: 1px solid var(--imp-border);
+    color: #fff;
     padding: 12px;
+    margin: 8px 0;
     width: 100%;
-    margin: 5px 0;
     font-family: 'Orbitron', sans-serif;
 }
 
 .imperial-btn {
-    background: var(--imp-blue);
-    color: white;
-    border: none;
+    background: #222;
+    color: #fff;
+    border: 1px solid var(--imp-blue);
     padding: 15px;
-    width: 100%;
     cursor: pointer;
     font-weight: bold;
-    margin-top: 10px;
+    transition: 0.3s;
 }
 
-.imperial-btn.red { background: var(--imp-red); }
+.imperial-btn:hover { background: var(--imp-blue); color: #000; }
+.imperial-btn.red { border-color: var(--imp-red); }
+.imperial-btn.red:hover { background: var(--imp-red); color: #fff; }
 
 .hidden { display: none !important; }
 
-/* Responsive für Handy-User */
-@media (max-width: 768px) {
+/* RESPONSIVE (Handy) */
+@media (max-width: 900px) {
     .main-layout { flex-direction: column; }
-    #admin-sidebar { width: 100%; border-right: none; border-bottom: 2px solid var(--imp-red); }
+    #admin-sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 3px solid var(--imp-red); }
 }
