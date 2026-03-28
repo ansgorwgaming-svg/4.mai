@@ -1,4 +1,4 @@
-// 1. INITIALISIERUNG (Bleibt gleich)
+// 1. INITIALISIERUNG
 const firebaseConfig = {
     apiKey: "AIzaSyDgHmywbvd_65tHQGdcoYIQFqoDue35mjw",
     authDomain: "may-the-4th-75cdd.firebaseapp.com",
@@ -13,10 +13,18 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Sound-Objekt erstellen (Imperial Alert Sound)
-const alertSound = new Audio('https://search-production.s3.amazonaws.com/uploads/original/8f8b8e0b968a3f8c8d8b8e0b968a3f8c/notification.mp3');
+// Sound für Alert
+const alertSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
-// --- AUTH STATUS ---
+// --- AUTH ---
+async function login() {
+    const userVal = document.getElementById('username').value.trim().toLowerCase();
+    const passInput = document.getElementById('password').value;
+    const email = `${userVal}@event.local`;
+    try { await auth.signInWithEmailAndPassword(email, passInput); } 
+    catch (e) { document.getElementById('login-error').innerText = "ACCESS DENIED"; }
+}
+
 auth.onAuthStateChanged(user => {
     if (user) {
         document.getElementById('login-screen').classList.add('hidden');
@@ -30,7 +38,7 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-// --- USER DATEN & ADMIN CHECK ---
+// --- USER & ADMIN LOGIK ---
 function loadUserData(uid) {
     db.collection('user').doc(uid).onSnapshot(doc => {
         if (doc.exists) {
@@ -43,56 +51,31 @@ function loadUserData(uid) {
                 document.getElementById('admin-panel').classList.remove('hidden');
                 document.getElementById('admin-sidebar').classList.remove('hidden');
                 loadAdminUserList();
-                startAdminNotifications(); // <--- STARTET DEN KAUF-MONITOR
+                startAdminNotifications(); // Startet Log & Sound
             }
         }
     });
 }
 
-// --- KAUF-FUNKTION (FÜR USER) ---
-async function buyItem(itemId, price) {
-    const userRef = db.collection('user').doc(auth.currentUser.uid);
-    const snap = await userRef.get();
-    const userData = snap.data();
-    
-    if (userData.crystals >= price) {
-        if(confirm(`Bestätige Kauf für ${price} 💎?`)) {
-            // 1. Kristalle abziehen
-            await userRef.update({ crystals: userData.crystals - price });
-
-            // 2. Kauf in Firebase 'logs' speichern (Damit der Admin es sieht)
-            await db.collection('logs').add({
-                msg: `${userData.username} hat ein Item gekauft!`,
-                price: price,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            alert("Kauf abgeschlossen.");
-        }
-    } else {
-        alert("Nicht genug Kristalle!");
-    }
-}
-
-// --- ADMIN NOTIFICATIONS (FÜR ADMIN) ---
+// History & Alert für Admin
 function startAdminNotifications() {
-    // Der Admin hört auf neue Einträge in der 'logs' Collection
-    db.collection('logs').orderBy('timestamp', 'desc').limit(1).onSnapshot(snap => {
-        snap.docChanges().forEach(change => {
-            if (change.type === "added") {
-                const log = change.doc.data();
-                
-                // Prüfen, ob der Log-Eintrag ganz neu ist (nicht von gestern)
-                if (log.timestamp) {
-                    const logTime = log.timestamp.toDate().getTime();
-                    const now = new Date().getTime();
-                    
-                    if (now - logTime < 5000) { // Nur wenn jünger als 5 Sekunden
-                        // SOUND ABSPIELEN
-                        alertSound.play().catch(e => console.log("Sound geblockt, klicke einmal auf die Seite."));
-                        
-                        // POPUP ANZEIGEN
-                        alert(`🚨 KAUF-ALARM: ${log.msg} (${log.price} Kristalle)`);
+    const logDiv = document.getElementById('admin-purchase-log');
+    db.collection('logs').orderBy('timestamp', 'desc').limit(15).onSnapshot(snap => {
+        logDiv.innerHTML = '';
+        snap.forEach((doc, index) => {
+            const log = doc.data();
+            const time = log.timestamp ? log.timestamp.toDate().toLocaleTimeString() : "...";
+            logDiv.innerHTML += `<div style="padding:5px; border-bottom:1px solid #333; color:var(--imp-blue);">
+                [${time}] ${log.userName}: -${log.price} 💎</div>`;
+            
+            // Neuer Kauf Sound & Alert
+            if (index === 0 && snap.docChanges().some(c => c.type === "added")) {
+                const change = snap.docChanges().find(c => c.type === "added");
+                if (change && change.doc.data().timestamp) {
+                    const diff = new Date().getTime() - change.doc.data().timestamp.toDate().getTime();
+                    if (diff < 8000) {
+                        alertSound.play().catch(() => {});
+                        console.log("ALERT: Neuer Kauf!");
                     }
                 }
             }
@@ -100,15 +83,26 @@ function startAdminNotifications() {
     });
 }
 
-// --- DER REST DER FUNKTIONEN (login, loadAdminUserList, etc.) ---
-async function login() {
-    const userVal = document.getElementById('username').value.trim().toLowerCase();
-    const passInput = document.getElementById('password').value;
-    const email = `${userVal}@event.local`;
-    try { await auth.signInWithEmailAndPassword(email, passInput); } 
-    catch (e) { document.getElementById('login-error').innerText = "ACCESS DENIED"; }
+// --- SHOP KAUFEN ---
+async function buyItem(itemId, price) {
+    const userRef = db.collection('user').doc(auth.currentUser.uid);
+    const snap = await userRef.get();
+    const cur = snap.data().crystals || 0;
+    
+    if (cur >= price) {
+        if(confirm(`Kaufen für ${price} 💎?`)) {
+            await userRef.update({ crystals: cur - price });
+            await db.collection('logs').add({
+                userName: snap.data().username,
+                price: price,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert("Erfolgreich!");
+        }
+    } else { alert("Zu wenig Kristalle!"); }
 }
 
+// --- ADMIN LISTS ---
 function loadAdminUserList() {
     db.collection('user').orderBy('username').onSnapshot(snap => {
         const list = document.getElementById('user-crystal-list');
@@ -133,6 +127,7 @@ async function addCrystalCustom() {
     });
 }
 
+// --- SHOP & MISC ---
 function listenToGameAndShop() {
     db.collection('settings').doc('gameState').onSnapshot(doc => {
         if(doc.exists) {
@@ -149,9 +144,9 @@ function loadShop(gameName) {
         div.innerHTML = '';
         snap.forEach(doc => {
             const item = doc.data();
-            div.innerHTML += `<div class="card" style="margin:0; padding:15px; border-color:var(--imp-blue);">
-                <h4>${item.name}</h4><p>${item.price} 💎</p>
-                <button class="imperial-btn" onclick="buyItem('${doc.id}', ${item.price})">BUY</button>
+            div.innerHTML += `<div class="card" style="margin:0; padding:10px; border-color:var(--imp-blue);">
+                <h4 style="margin:0;">${item.name}</h4><p style="color:var(--imp-blue)">${item.price} 💎</p>
+                <button class="imperial-btn" style="width:100%" onclick="buyItem('${doc.id}', ${item.price})">BUY</button>
             </div>`;
         });
     });
@@ -162,15 +157,14 @@ function loadLeaderboard() {
         const list = document.getElementById('leaderboard');
         list.innerHTML = '';
         snap.forEach(doc => {
-            const u = doc.data();
-            list.innerHTML += `<li><span>${u.username}</span> <span>${u.totalPoints || 0} PX</span></li>`;
+            list.innerHTML += `<li style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #222;">
+                <span>${doc.data().username}</span><span>${doc.data().totalPoints || 0} PX</span></li>`;
         });
     });
 }
 
 async function updateGameFromDropdown() {
-    const val = document.getElementById('game-select').value;
-    await db.collection('settings').doc('gameState').set({ name: val });
+    await db.collection('settings').doc('gameState').set({ name: document.getElementById('game-select').value });
 }
 
 async function addShopItem() {
